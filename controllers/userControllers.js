@@ -10,10 +10,9 @@ const createToken = (_id)=>{
 // signup
 
 const signup = async (req, res) => {
-    const { userid, password } = req.body
+    const { userid, password } = req.body;
     try {
         const user = await User.signup(userid, password)
-
         const token = createToken(user._id)
         res.status(200).json({ userid, token })
     } catch (error) {
