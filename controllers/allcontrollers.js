@@ -40,10 +40,10 @@ const getOne = async (req, res) => {
 }
 // post an activity
 const postActivity = async (req, res) => {
-    const { title, description } = req.body;
+    const { title, cost,startDate } = req.body;
     const user = req.user._id;
     try {
-        const workout = await Workout.create({ title, description, user })
+        const workout = await Workout.create({ title, cost, user, date:startDate })
         res.status(200).json(workout)
     } catch (error) {
         res.status(400).json({ error: error.message })
