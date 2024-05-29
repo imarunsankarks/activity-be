@@ -1,83 +1,94 @@
-const Workout = require('../schema/workout')
-const mongoose = require('mongoose');
+const Workout = require("../schema/workout");
+const mongoose = require("mongoose");
 
 // get all
 const getAll = async (req, res) => {
-    try {
-        const user = req.user._id;
-        let workouts = await Workout.find({ user }).sort({ createdAt: -1 })
+  try {
+    const user = req.user._id;
+    let workouts = await Workout.find({ user }).sort({ createdAt: -1 });
 
-        if (!workouts) {
-            return res.status(404).json({ message: 'No workouts found' });
-        }
-        else {
-            res.status(200).json(workouts);
-        }
-    } catch (err) {
-        console.log("Error getting workouts", err);
-        res.status(500).json({ message: 'Server error' });
+    if (!workouts) {
+      return res.status(404).json({ message: "No workouts found" });
+    } else {
+      res.status(200).json(workouts);
     }
-}
+  } catch (err) {
+    console.log("Error getting workouts", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 // get one
 const getOne = async (req, res) => {
-    const { id } = req.params
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ message: 'No such workout' })
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: "No such workout" });
+  }
+  try {
+    let workout = await Workout.findById(id);
+    if (!workout) {
+      return res.status(404).json({ message: "No workout found" });
+    } else {
+      res.status(200).json(workout);
     }
-    try {
-        let workout = await Workout.findById(id)
-        if (!workout) {
-            return res.status(404).json({ message: 'No workout found' });
-        }
-        else {
-            res.status(200).json(workout);
-        }
-    } catch (err) {
-        console.log("Error getting workouts", err);
-        res.status(500).json({ message: 'Server error' });
-    }
-}
+  } catch (err) {
+    console.log("Error getting workouts", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 // post an activity
 const postActivity = async (req, res) => {
-    const { title, cost,startDate } = req.body;
-    const user = req.user._id;
-    try {
-        const workout = await Workout.create({ title, cost, user, date:startDate })
-        res.status(200).json(workout)
-    } catch (error) {
-        res.status(400).json({ error: error.message })
-    }
-}
+  const { title, cost, startDate, type } = req.body;
+  const user = req.user._id;
+  try {
+    const workout = await Workout.create({
+      title,
+      cost,
+      user,
+      date: startDate,
+      type,
+    });
+    res.status(200).json(workout);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 const deleteOne = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const workout = await Workout.deleteOne({ _id: id })
-        if (!workout) {
-            return res.status(404).json('Workout not found')
-        } else {
-            res.status(200).json('Deleted the workout')
-        }
-    } catch {
-        res.status(500).send('server error')
+  const { id } = req.params;
+  try {
+    const workout = await Workout.deleteOne({ _id: id });
+    if (!workout) {
+      return res.status(404).json("Workout not found");
+    } else {
+      res.status(200).json("Deleted the workout");
     }
-}
+  } catch {
+    res.status(500).send("server error");
+  }
+};
 
 const updateOne = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const workout = await Workout.findOneAndUpdate({ _id: id }, { ...req.body })
-        if (!workout) {
-            return res.status(404).json('Workout not found')
-        } else {
-            res.status(200).json(workout)
-        }
-    } catch {
-        res.status(500).send('server error')
+  const { id } = req.params;
+  try {
+    const workout = await Workout.findOneAndUpdate(
+      { _id: id },
+      { ...req.body }
+    );
+    if (!workout) {
+      return res.status(404).json("Workout not found");
+    } else {
+      res.status(200).json(workout);
     }
-}
+  } catch {
+    res.status(500).send("server error");
+  }
+};
 
 module.exports = {
-    postActivity, getAll, getOne, deleteOne, updateOne
-}
+  postActivity,
+  getAll,
+  getOne,
+  deleteOne,
+  updateOne,
+};

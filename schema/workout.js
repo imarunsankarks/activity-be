@@ -18,6 +18,11 @@ const activitySchema = new Schema(
         },
         date: {
             type: Date,
+        },
+        type: {
+            type: String,
+            enum: ['expense', 'savings'],
+            required: true
         }
     },
     { timestamps: true }
