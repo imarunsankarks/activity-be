@@ -5,7 +5,7 @@ require('dotenv').config();
 const allroutes = require('./routes/allrouter');
 const userRoutes = require('./routes/userRouter');
 
-// express app
+// express apps
 const app = express();
 
 // middleware
