@@ -1,5 +1,7 @@
 const Workout = require("../schema/workout");
 const mongoose = require("mongoose");
+const OpenAI = require('openai');
+require('dotenv').config();
 
 // get all
 const getAll = async (req, res) => {
@@ -85,10 +87,52 @@ const updateOne = async (req, res) => {
   }
 };
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY, 
+});
+
+const getUserWorkouts = async (userId) => {
+  try {
+    return await Workout.find({ user: userId }).sort({ createdAt: -1 });
+  } catch (err) {
+    console.log("Error getting workouts", err);
+    throw err;
+  }
+};
+
+const ai = async (req, res) => {
+  const { query } = req.body;
+  try {
+    const user = req.user._id;
+    const userExpenses = await getUserWorkouts(user);
+    const formattedExpenses = userExpenses.map(expense => {
+      return `${expense.type} of ${expense.cost} rupees for ${expense.title} on ${expense.date}`;
+    });
+
+    const prompt = `From the below Expense data what is ${query}\n\nExpense data: ${JSON.stringify(
+      formattedExpenses
+    )}, summarize if possible based on all the data mentioned in Expense data, check date properly. I there is no data on specified data, tell no data available`;
+
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 150,
+    });
+    const answer = response.choices[0].message.content;
+
+    res.json({ answer });
+  } catch (error) {
+    console.error("Error processing AI query:", error.message);
+    res.status(500).json({ error: "Failed to process query" });
+  }
+};
+
 module.exports = {
   postActivity,
   getAll,
   getOne,
   deleteOne,
   updateOne,
+  ai,
 };
