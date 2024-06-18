@@ -7,7 +7,7 @@ require('dotenv').config();
 const getAll = async (req, res) => {
   try {
     const user = req.user._id;
-    let workouts = await Workout.find({ user }).sort({ createdAt: -1 });
+    let workouts = await Workout.find({ user }).sort({ date: -1 });
 
     if (!workouts) {
       return res.status(404).json({ message: "No workouts found" });
