@@ -40,7 +40,7 @@ const getOne = async (req, res) => {
 };
 // post an activity
 const postActivity = async (req, res) => {
-  const { title, cost, startDate, type } = req.body;
+  const { title, cost, startDate, type,source } = req.body;
   const user = req.user._id;
   try {
     const workout = await Workout.create({
@@ -49,6 +49,7 @@ const postActivity = async (req, res) => {
       user,
       date: startDate,
       type,
+      source
     });
     res.status(200).json(workout);
   } catch (error) {

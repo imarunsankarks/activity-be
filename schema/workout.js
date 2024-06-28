@@ -19,6 +19,10 @@ const activitySchema = new Schema(
         date: {
             type: Date,
         },
+        source:{
+            type: String,
+            enum: ['upi', 'card','cash'],
+        },
         type: {
             type: String,
             enum: ['expense', 'savings'],
