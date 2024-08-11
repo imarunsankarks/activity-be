@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 // create token
 const createToken = (_id) => {
-    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '2d' });
+    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '30d' });
 };
 
 // signup
@@ -55,16 +55,16 @@ const updateProfilePhoto = async (req, res) => {
 const deleteAcc = async (req, res) => {
     const { id } = req.params;
     try {
-      const user = await User.deleteOne({ _id: id });
-      if (!user) {
-        return res.status(404).json("User not found");
-      } else {
-        res.status(200).json("Deleted the user");
-      }
+        const user = await User.deleteOne({ _id: id });
+        if (!user) {
+            return res.status(404).json("User not found");
+        } else {
+            res.status(200).json("Deleted the user");
+        }
     } catch {
-      res.status(500).send("server error");
+        res.status(500).send("server error");
     }
-  };
+};
 
 module.exports = {
     signup,
